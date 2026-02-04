@@ -1,0 +1,139 @@
+COMPREHENSIVE PROJECT EXPLANATION: EXPERT HEALTH DIAGNOSIS SYSTEM
+===================================================================
+
+1. PROJECT OVERVIEW
+-------------------
+This is a "Full Stack" web application. This means it has two main parts that talk to each other:
+A. The Frontend (Client-Side): What the user sees on the screen (HTML/CSS/JS).
+B. The Backend (Server-Side): The logic, database, and security running in the background (Java Spring Boot).
+
+The goal of the project is to connect Patients and Doctors, allowing them to:
+- Register and Login secureley.
+- Manage Profiles (Bio, Specialization).
+- Book Appointments (Slot management).
+- Chat in Real-Time (Text).
+- Video Call (WebRTC).
+- Take automated Health Assessments.
+
+-------------------------------------------------------------------
+
+2. THE FRONTEND (The "Face" of the App)
+---------------------------------------
+Location: /frontend_app
+Type: Single Page Application functionality using vanilla HTML/JS.
+
+A. Structure (HTML)
+   - index.html: The landing page. Contains Login and Register forms.
+   - dashboard.html: The main hub for Patients. Shows appointments, doctors list, and assessments.
+   - doctors.html: The dashboard for Doctors. Shows their schedule and upcoming user appointments.
+   - admin-*.html: Dedicated pages for the Admin to manage users and appointments.
+   - chat.html: The interface for real-time messaging.
+   - video.html: The interface for video calls.
+
+B. Styling (CSS)
+   - Provides the visual look (colors, layout, responsiveness).
+   - We use a custom 'style.css' (or similar) to make it look modern and "premium".
+
+C. Logic (JavaScript)
+   - This is the engine of the frontend. It runs in the user's browser.
+   - auth.js:
+     - When you click "Login", this script grabs the username/password.
+     - It sends a "POST" request to the Backend API (e.g., http://localhost:8080/api/auth/login).
+     - If successful, it receives a "Token" (JWT) and saves it in the browser (localStorage).
+     - This Token is like an ID card. Every time you ask for valid data later, the browser shows this card.
+   - dashboard.js / appointments.js:
+     - On load, it fetches data from the backend (e.g., "Get all doctors").
+     - It loops through the data and creates HTML elements (cards/tables) dynamically to show them.
+   - chat.js:
+     - Connects to a "WebSocket" (a permanent open line to the server).
+     - When you send a message, it pushes it through this line.
+     - When a message arrives, it instantly appends it to the chat window.
+
+-------------------------------------------------------------------
+
+3. THE BACKEND (The "Brain" of the App)
+---------------------------------------
+Location: /backend_app
+Type: Java application using the Spring Boot framework.
+
+A. Controller Layer (The Receptionists)
+   - Location: src/main/java/com/health/diagnosis/controller
+   - These files listen for requests from the Frontend.
+   - AdminController.java: Listens for requests to delete users or view system stats.
+   - AuthController.java: Listens for "Login" or "Register" requests.
+   - AppointmentController.java: Listens for "Book Appointment" or "Cancel Appointment".
+   - They don't do the work themselves; they pass orders to the "Service" layer.
+
+B. Service Layer (The Workers)
+   - Location: src/main/java/com/health/diagnosis/service
+   - Contains the business logic.
+   - Example (AppointmentService):
+     - Checks if the doctor is widely available at that time.
+     - Checks if the slot is already taken.
+     - If all clear, it tells the "Repository" to save it.
+
+C. Repository Layer (The Librarians)
+   - Location: src/main/java/com/health/diagnosis/repository
+   - These interfaces talk directly to the Database.
+   - They use JPA (Java Persistence API) to turn Java Objects (like User, Appointment) into Database Rows (Tables) automatically.
+   - We don't write complex SQL queries; Spring writes them for us (e.g., findByUsername).
+
+D. Model/Entity Layer (The Data Templates)
+   - Location: src/main/java/com/health/diagnosis/model
+   - Defines what data looks like.
+   - User.java: Defines that a user has an ID, Username, Password, and Role.
+   - Appointment.java: Defines date, time, patient_id, doctor_id, and status.
+
+E. Security (The Guards)
+   - Location: src/main/java/com/health/diagnosis/security
+   - JwtAuthenticationFilter.java:
+     - Sits at the door of every request.
+     - Checks if the request has a valid Token (the ID card).
+     - If no token, it rejects the request (403 Forbidden).
+   - SecurityConfig.java:
+     - Rules for who can go where (e.g., only "ADMIN" can access /api/admin/**).
+
+-------------------------------------------------------------------
+
+4. KEY FEATURES EXPLAINED
+-------------------------
+
+A. Authentication (Login)
+   1. User types user/pass -> Frontend sends to Backend.
+   2. Backend checks Database. If match -> Backend creates a JWT String.
+   3. Backend sends JWT to Frontend.
+   4. Frontend saves JWT. User is "Logged In".
+
+B. Booking an Appointment
+   1. Patient selects a Doctor and Time.
+   2. Frontend checks if the user has a Token.
+   3. Request sent: "Book Dr. Smith at 10 AM".
+   4. AppointmentController receives it -> AppointmentService checks availability -> AppointmentRepository saves to DB.
+   5. Success message returned to Frontend.
+
+C. Real-Time Chat
+   1. We use "WebSockets" (STOMP protocol).
+   2. Unlike normal HTTP (Request-Response), this is a two-way continuous connection.
+   3. ChatController.java handles routing messages.
+   4. When User A writes to User B, the message goes to the Server, which immediately forwards it to User B's open socket.
+
+D. Video Calls (WebRTC)
+   1. Uses a technology called WebRTC (Web Real-Time Communication).
+   2. The Backend acts as a "Signaling Server". It doesn't process the video itself (too heavy).
+   3. Instead, it helps User A and User B find each other's IP addresses.
+   4. Once they find each other (handshake), the video flows directly from Browser to Browser (Peer-to-Peer).
+
+-------------------------------------------------------------------
+
+5. DATABASE
+-----------
+- We use an "H2 Database" for development.
+- It is a lightweight database that can run inside the application memory or save to a local file.
+- When the app starts, Spring Boot looks at the Entity classes (User, Appointment) and automatically creates the Tables in the database.
+
+6. SUMMARY
+----------
+This project is a complete ecosystem.
+- Changes in the Frontend (JS) trigger actions in the Backend (Java).
+- The Backend processes logic and stores data in the Database.
+- Security ensures only the right people can do the right things.
