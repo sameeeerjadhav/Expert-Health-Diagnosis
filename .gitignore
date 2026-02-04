@@ -33,3 +33,8 @@ build/
 *.iml
 .vscode/
 *.sublime-workspace
+
+# Specific Logs
+startup_log.txt
+compile_log*.txt
+compile_error.txt
