@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Expert Health</title>
+    <meta name="description"
+        content="Your health portal dashboard - manage appointments, assessments, and consultations.">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <!-- App Container -->
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="app-sidebar">
+            <!-- Loading Sidebar... -->
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Dashboard Header -->
+            <header class="top-bar dashboard-header">
+                <div>
+                    <h1 class="dashboard-greeting">
+                        <span id="greeting-text">Good Morning</span>, <span class="user-name"
+                            id="user-name">User</span>! 👋
+                    </h1>
+                    <p class="dashboard-subtitle" id="dashboard-subtitle">Welcome back to your health portal.</p>
+                </div>
+                <div class="dashboard-header-actions">
+                    <a href="javascript:location.reload()" class="btn btn-outline">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </a>
+                    <a href="assessment.html" class="btn btn-primary" id="header-new-assessment">
+                        <i class="fas fa-plus"></i> New Assessment
+                    </a>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid-enhanced">
+                <div class="stat-card-enhanced blue">
+                    <div class="stat-card-content">
+                        <div class="stat-icon-enhanced blue">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label" id="stat-1-label">Upcoming Appointments</div>
+                            <div class="stat-value" id="stat-1-value">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card-enhanced green">
+                    <div class="stat-card-content">
+                        <div class="stat-icon-enhanced green">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label" id="stat-2-label">Doctors Available</div>
+                            <div class="stat-value" id="stat-2-value">12</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card-enhanced purple">
+                    <div class="stat-card-content">
+                        <div class="stat-icon-enhanced purple">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Messages</div>
+                            <div class="stat-value" id="stat-3-value">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions Section -->
+            <div class="section-header">
+                <h3 class="section-title"><i class="fas fa-bolt"></i> Quick Actions</h3>
+            </div>
+            <div class="action-grid-enhanced">
+                <!-- Assessment -->
+                <div class="action-card-enhanced blue" id="action-assessment">
+                    <div class="action-icon blue">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Mental Health Check</h3>
+                    <p>Take our AI-powered assessment to analyze your symptoms and get a personalized risk score.</p>
+                    <a href="assessment.html" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Start Assessment
+                    </a>
+                </div>
+
+                <!-- Find Doctor -->
+                <div class="action-card-enhanced green" id="action-find-doctor">
+                    <div class="action-icon green">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3>Find a Specialist</h3>
+                    <p>Browse our directory of top-rated Psychiatrists and Therapists near you.</p>
+                    <a href="doctors.html" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Browse Doctors
+                    </a>
+                </div>
+
+                <!-- Chat -->
+                <div class="action-card-enhanced purple">
+                    <div class="action-icon purple">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Consultations</h3>
+                    <p>Access your secure chat and video history with medical professionals.</p>
+                    <a href="chat.html" class="btn btn-primary">
+                        <i class="fas fa-comment-dots"></i> Open Messenger
+                    </a>
+                </div>
+            </div>
+
+            <!-- Appointment Summary Card -->
+            <div class="data-card" id="appointment-summary-section">
+                <div class="data-card-header">
+                    <h3 class="data-card-title">
+                        <i class="fas fa-calendar-alt"></i> Appointment Summary
+                    </h3>
+                    <div class="data-card-actions">
+                        <a href="appointments.html" class="btn btn-primary"
+                            style="font-size: 0.85rem; padding: 8px 14px;">
+                            <i class="fas fa-external-link-alt"></i> Manage Appointments
+                        </a>
+                    </div>
+                </div>
+                <div class="data-card-body">
+                    <div class="appointment-summary-grid" id="appointment-summary">
+                        <div class="appointment-stat pending">
+                            <div class="appointment-stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="appointment-stat-info">
+                                <span class="appointment-stat-value" id="pending-count">0</span>
+                                <span class="appointment-stat-label">Pending</span>
+                            </div>
+                        </div>
+                        <div class="appointment-stat confirmed">
+                            <div class="appointment-stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="appointment-stat-info">
+                                <span class="appointment-stat-value" id="confirmed-count">0</span>
+                                <span class="appointment-stat-label">Confirmed</span>
+                            </div>
+                        </div>
+                        <div class="appointment-stat completed">
+                            <div class="appointment-stat-icon">
+                                <i class="fas fa-clipboard-check"></i>
+                            </div>
+                            <div class="appointment-stat-info">
+                                <span class="appointment-stat-value" id="completed-count">0</span>
+                                <span class="appointment-stat-label">Completed</span>
+                            </div>
+                        </div>
+                        <div class="appointment-stat cancelled">
+                            <div class="appointment-stat-icon">
+                                <i class="fas fa-times-circle"></i>
+                            </div>
+                            <div class="appointment-stat-info">
+                                <span class="appointment-stat-value" id="cancelled-count">0</span>
+                                <span class="appointment-stat-label">Cancelled</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patient: Assessment History -->
+            <div class="data-card" id="assessment-history-section" style="display: none;">
+                <div class="data-card-header">
+                    <h3 class="data-card-title">
+                        <i class="fas fa-clipboard-list"></i> Assessment History
+                    </h3>
+                </div>
+                <div class="data-card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Risk Level</th>
+                                <th>Score</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assessment-history-list">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Doctor: My Patients -->
+            <div class="data-card" id="my-patients-section" style="display: none;">
+                <div class="data-card-header">
+                    <h3 class="data-card-title">
+                        <i class="fas fa-users"></i> My Patients
+                    </h3>
+                </div>
+                <div class="data-card-body">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Latest Risk</th>
+                            </tr>
+                        </thead>
+                        <tbody id="my-patients-list">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+
+</html>

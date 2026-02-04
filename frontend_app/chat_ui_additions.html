@@ -1,0 +1,48 @@
+<!-- Add this in chat.html after the video button (around line 284) -->
+
+<!-- Search Input - Add after video button -->
+<input type="text" id="search-input" placeholder="Search messages..."
+    style="padding: 6px 10px; border: 1px solid var(--border-color); border-radius: 6px; width: 200px; font-size: 0.85rem;"
+    onkeyup="searchMessages(this.value)">
+
+<!-- Modify the input area to include file upload button (around line 296) -->
+<div class="chat-input">
+    <input type="file" id="file-input" style="display: none;" onchange="handleFileSelect(event)">
+    <button class="btn btn-outline" id="upload-btn" onclick="document.getElementById('file-input').click()">
+        <i class="fas fa-paperclip"></i>
+    </button>
+    <input type="text" id="message-input" placeholder="Type a message..." />
+    <button class="btn btn-primary" id="send-btn">
+        <i class="fas fa-paper-plane"></i>
+    </button>
+</div>
+
+<!-- Add styling for file attachments and search highlighting -->
+<style>
+    .message img {
+        max-width: 100%;
+        border-radius: 8px;
+        margin-top: 8px;
+    }
+
+    .message a {
+        color: inherit;
+        text-decoration: underline;
+    }
+
+    .unread-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: var(--danger);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 0.7rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+    }
+</style>

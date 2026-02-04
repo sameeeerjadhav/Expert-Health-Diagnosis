@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Specialists | Expert Health</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        .doctors-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .doctor-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .avatar-large {
+            width: 80px;
+            height: 80px;
+            background: #e0f2fe;
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .tag-badge {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            background: #f1f5f9;
+            color: var(--text-sidebar);
+            border-radius: 4px;
+            margin-top: 0.5rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="app-sidebar"></aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="top-bar">
+                <div>
+                    <h1 class="page-title">Find a Specialist</h1>
+                    <p class="text-muted" id="context-text">Recommended based on your assessment.</p>
+                </div>
+            </header>
+
+            <div class="doctors-grid" id="doctors-container">
+                <!-- Loading -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 4rem;">
+                    <i class="fas fa-spinner fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Script Logic Inline for simplicity in this migration -->
+    <script src="js/sidebar.js"></script>
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        const token = localStorage.getItem('token');
+        const riskLevel = localStorage.getItem('lastRiskLevel') || 'Medium';
+
+        document.getElementById('context-text').innerText = `Displaying specialists for ${riskLevel} Risk level.`;
+
+        function logout() { localStorage.removeItem('token'); window.location.href = 'index.html'; }
+
+        async function loadDoctors() {
+            try {
+                const response = await fetch(`${API_BASE}/doctors/recommend?riskLevel=${riskLevel}`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const doctors = await response.json();
+                    renderDoctors(doctors);
+                } else {
+                    document.getElementById('doctors-container').innerHTML = '<p>No doctors found.</p>';
+                }
+            } catch (error) {
+                console.error(error);
+                document.getElementById('doctors-container').innerHTML = '<p class="text-danger">Failed to load data.</p>';
+            }
+        }
+
+        function renderDoctors(doctors) {
+            const container = document.getElementById('doctors-container');
+            container.innerHTML = '';
+
+            if (doctors.length === 0) {
+                container.innerHTML = '<p>No specialists available.</p>';
+                return;
+            }
+
+            doctors.forEach(doc => {
+                const card = document.createElement('div');
+                card.className = 'card doctor-card';
+                const name = doc.user?.fullName || 'Dr. Unknown';
+                const specialization = doc.user?.specialization || 'General';
+                const rating = doc.rating || 4.5;
+                const userId = doc.user?.id || doc.id;
+
+                card.innerHTML = `
+                    <div class="avatar-large">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">${name}</h3>
+                    <div class="text-primary" style="font-weight: 500; font-size: 0.9rem;">${specialization}</div>
+                    
+                    <div style="display: flex; gap: 5px; margin-bottom: 1.5rem;">
+                         <span class="tag-badge"><i class="fas fa-star text-warning"></i> ${rating.toFixed(1)}</span>
+                         <span class="tag-badge text-success">Online</span>
+                    </div>
+                    
+                    <button class="btn btn-primary" style="width: 100%; margin-bottom: 0.5rem;" onclick="connectDoctor(${userId}, '${name}')">
+                        <i class="fas fa-comment"></i> Chat
+                    </button>
+                    <button class="btn btn-outline" style="width: 100%;" onclick="connectVideo(${userId}, '${name}')">
+                        <i class="fas fa-video"></i> Video
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.connectDoctor = (id, name) => {
+            localStorage.setItem('chatRecipientId', id);
+            localStorage.setItem('chatRecipientName', name);
+            window.location.href = 'chat.html';
+        }
+
+        window.connectVideo = (id, name) => {
+            localStorage.setItem('chatRecipientId', id);
+            localStorage.setItem('chatRecipientName', name);
+            window.location.href = 'video.html';
+        }
+
+        loadDoctors();
+    </script>
+</body>
+
+</html>

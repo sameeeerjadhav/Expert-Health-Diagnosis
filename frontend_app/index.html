@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Expert Health</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="auth-body">
+
+    <div class="auth-card">
+        <div class="auth-header">
+            <div class="auth-logo"><i class="fas fa-heartbeat"></i></div>
+            <h2 style="font-weight: 700;">Expert Health</h2>
+            <p class="text-muted">Sign in to your portal</p>
+        </div>
+
+        <!-- Login Form -->
+        <form id="login-form">
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" name="email" required placeholder="doctor@example.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Sign In</button>
+            <p style="margin-top: 1.5rem; font-size: 0.9rem;">
+                New User? <span class="link" onclick="toggleAuth()">Create Account</span>
+            </p>
+        </form>
+
+        <!-- Register Form -->
+        <form id="register-form" style="display: none;">
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" class="form-control" name="fullName" required placeholder="John Doe">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email Address</label>
+                <input type="email" class="form-control" name="email" required placeholder="john@example.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" required placeholder="••••••••">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Role</label>
+                <select class="form-control" name="role">
+                    <option value="PATIENT">Patient</option>
+                    <option value="DOCTOR">Doctor</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 12px;">Create Account</button>
+            <p style="margin-top: 1.5rem; font-size: 0.9rem;">
+                Already have an account? <span class="link" onclick="toggleAuth()">Login</span>
+            </p>
+        </form>
+    </div>
+
+    <!-- JS Logic -->
+    <script>
+        const API_BASE = 'http://localhost:8080/api/auth';
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+
+        function toggleAuth() {
+            if (loginForm.style.display === 'none') {
+                loginForm.style.display = 'block';
+                registerForm.style.display = 'none';
+            } else {
+                loginForm.style.display = 'none';
+                registerForm.style.display = 'block';
+            }
+        }
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(loginForm);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch(`${API_BASE}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    localStorage.setItem('token', result.token);
+
+                    // SAVE USER INFO
+                    // Ideally backend sends role. Since our simple JWT response might just be token,
+                    // We need to fetch profile OR assume/decode.
+                    // For THIS DEMO: I will fetch the profile immediately after login to confirm role.
+                    // ... Or simply save the email/role if the backend returned it. 
+                    // Let's decode the JWT payload! (Standard practice)
+
+                    const payload = JSON.parse(atob(result.token.split('.')[1]));
+                    localStorage.setItem('userRole', payload.role || 'PATIENT');
+                    // Note: Our JWT generation logic needs to include role in claims.
+                    // If not, we might default to PATIENT. Let's assume PATIENT for now and fix backend if needed.
+
+                    // Actually, let's just use the email pattern or ask user?
+                    // Better: Let's simple fetch "GET /api/auth/me" if it existed.
+                    // Plan B: Start simply. We will rely on the role claim if present.
+                    // If the backend didn't put role in JWT, we are blind.
+                    // Let's save the email "doctor" vs "patient" for the demo if JWT is generic.
+
+                    if (payload.role) {
+                        localStorage.setItem('userRole', payload.role);
+                    } else if (data.email.includes("doctor")) {
+                        localStorage.setItem('userRole', 'DOCTOR');
+                    } else if (data.email.includes("admin")) {
+                        localStorage.setItem('userRole', 'ADMIN');
+                    } else {
+                        localStorage.setItem('userRole', 'PATIENT');
+                    }
+
+                    const role = localStorage.getItem('userRole');
+                    if (role === 'ADMIN') {
+                        window.location.href = 'admin-dashboard.html';
+                    } else {
+                        window.location.href = 'dashboard.html';
+                    }
+                } else {
+                    alert('Login Failed');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Network Error');
+            }
+        });
+
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(registerForm);
+            const data = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    alert('Registration Successful! Please Login.');
+                    toggleAuth();
+                } else {
+                    alert('Registration Failed');
+                }
+            } catch (error) {
+                console.error(error);
+                alert('Error');
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Expert Health</title>
+    <meta name="description" content="Expert Health Admin Dashboard - Manage users, appointments, and system settings.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body class="theme-admin">
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="app-sidebar"></aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Dashboard Header -->
+            <header class="top-bar dashboard-header">
+                <div>
+                    <h1 class="dashboard-greeting">
+                        <span id="greeting-text">Good Morning</span>, <span class="user-name"
+                            id="admin-name">Admin</span>! 👋
+                    </h1>
+                    <p class="dashboard-subtitle">System administration and management.</p>
+                </div>
+                <div class="dashboard-header-actions">
+                    <button class="btn btn-outline" onclick="window.location.reload()">
+                        <i class="fas fa-sync-alt"></i> Refresh
+                    </button>
+                </div>
+            </header>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid-enhanced" style="grid-template-columns: repeat(4, 1fr);">
+                <div class="stat-card-enhanced blue">
+                    <div class="stat-card-content">
+                        <div class="stat-icon-enhanced blue">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Total Users</div>
+                            <div class="stat-value" id="totalUsers">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card-enhanced green">
+                    <div class="stat-card-content">
+                        <div class="stat-icon-enhanced green">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Doctors</div>
+                            <div class="stat-value" id="totalDoctors">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card-enhanced purple">
+                    <div class="stat-card-content">
+                        <div class="stat-icon-enhanced purple">
+                            <i class="fas fa-user-injured"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Patients</div>
+                            <div class="stat-value" id="totalPatients">0</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card-enhanced orange">
+                    <div class="stat-card-content">
+                        <div class="stat-icon-enhanced orange">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-label">Appointments</div>
+                            <div class="stat-value" id="totalAppointments">0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="section-header">
+                <h3 class="section-title"><i class="fas fa-cogs"></i> Management</h3>
+            </div>
+            <div class="action-grid-enhanced">
+                <div class="action-card-enhanced purple">
+                    <div class="action-icon purple">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <h3>Manage Users</h3>
+                    <p>View, edit, or delete patients and doctors in the system.</p>
+                    <button class="btn btn-primary" onclick="window.location.href='admin-users.html'">
+                        <i class="fas fa-arrow-right"></i> Go to Users
+                    </button>
+                </div>
+                <div class="action-card-enhanced blue">
+                    <div class="action-icon blue">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <h3>Manage Appointments</h3>
+                    <p>View and manage all appointment bookings across the platform.</p>
+                    <button class="btn btn-primary" onclick="window.location.href='admin-appointments.html'">
+                        <i class="fas fa-arrow-right"></i> Go to Appointments
+                    </button>
+                </div>
+                <div class="action-card-enhanced green">
+                    <div class="action-icon green">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <h3>Manage Questions</h3>
+                    <p>Edit the assessment questionnaire and add new questions.</p>
+                    <button class="btn btn-primary" onclick="window.location.href='admin-questions.html'">
+                        <i class="fas fa-arrow-right"></i> Go to Questions
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/sidebar.js?v=2"></script>
+    <script>
+        // Force init if not populated
+        window.addEventListener('load', () => {
+            const sidebar = document.getElementById('app-sidebar');
+            if (sidebar && sidebar.innerHTML.trim() === '') {
+                console.log('Sidebar empty, forcing init...');
+                if (typeof initSidebar === 'function') initSidebar();
+            }
+        });
+
+        const API_BASE = 'http://localhost:8080/api';
+        const token = localStorage.getItem('token');
+
+        if (!token) window.location.href = 'index.html';
+
+        // Set greeting based on time
+        function setGreeting() {
+            const hour = new Date().getHours();
+            let greeting = 'Good Morning';
+            if (hour >= 12 && hour < 17) greeting = 'Good Afternoon';
+            else if (hour >= 17) greeting = 'Good Evening';
+
+            const greetingEl = document.getElementById('greeting-text');
+            if (greetingEl) greetingEl.innerText = greeting;
+        }
+
+        // Load admin name
+        async function loadAdminInfo() {
+            try {
+                const response = await fetch(`${API_BASE}/users/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const user = await response.json();
+                const firstName = (user.fullName || 'Admin').split(' ')[0];
+                document.getElementById('admin-name').innerText = firstName;
+            } catch (error) {
+                console.error('Error loading admin info:', error);
+            }
+        }
+
+        // Load stats
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/dashboard/stats`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const stats = await response.json();
+
+                document.getElementById('totalUsers').textContent = stats.totalUsers || 0;
+                document.getElementById('totalDoctors').textContent = stats.totalDoctors || 0;
+                document.getElementById('totalPatients').textContent = stats.adminTotalPatients || 0;
+                document.getElementById('totalAppointments').textContent = stats.totalAppointments || 0;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'index.html';
+        }
+
+        setGreeting();
+        loadAdminInfo();
+        loadStats();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Assessment | Expert Health</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Enhanced Assessment Styling */
+        .assessment-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .progress-container {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: #e0e7ff;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #0ea5e9);
+            transition: width 0.5s ease;
+            border-radius: 20px;
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .question-number {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), #0ea5e9);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 2rem;
+            line-height: 1.5;
+        }
+
+        .option-group {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .option-btn {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            padding: 1.5rem 1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 500;
+            color: var(--text-main);
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .option-btn:hover::before {
+            left: 100%;
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: #eff6ff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(34, 139, 230, 0.2);
+        }
+
+        .option-btn.selected {
+            background: linear-gradient(135deg, var(--primary), #0ea5e9);
+            color: white;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(34, 139, 230, 0.3);
+        }
+
+        .option-btn.selected::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+
+        .option-label {
+            display: block;
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 0.5rem;
+        }
+
+        .navigation-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+
+        .btn-nav {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-prev {
+            background: white;
+            color: var(--text-main);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-prev:hover {
+            background: #f8fafc;
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, var(--primary), #0ea5e9);
+            color: white;
+            margin-left: auto;
+        }
+
+        .btn-next:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(34, 139, 230, 0.3);
+        }
+
+        /* Result Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        .modal-content {
+            background: white;
+            padding: 3rem;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: scaleIn 0.3s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                transform: scale(0.9);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .result-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem auto;
+            font-size: 2.5rem;
+        }
+
+        .risk-badge {
+            display: inline-block;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 1.5rem 0;
+        }
+
+        .risk-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .risk-moderate {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .risk-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 2rem auto;
+            border: 4px solid var(--primary);
+        }
+
+        .score-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .score-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .intro-card {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border-radius: 16px;
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .intro-icon {
+            font-size: 4rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .option-group {
+                grid-template-columns: 1fr;
+            }
+
+            .question-card {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="app-sidebar"></aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- <header class="top-bar">
+                <div>
+                    <h1 class="page-title">Health Assessment</h1>
+                    <p class="text-muted">Complete a comprehensive health check for personalized insights</p>
+                </div>
+            </header> -->
+
+            <div class="assessment-container">
+                <!-- Introduction -->
+                <div class="intro-card" id="intro-section">
+                    <div class="hero-content">
+                        <div class="hero-icon-wrapper">
+                            <i class="fas fa-heartbeat hero-icon"></i>
+                        </div>
+                        <h2 class="hero-title">Your Health Journey Starts Here</h2>
+                        <p class="hero-subtitle">
+                            Take a moment to check in with your body. Our AI-powered assessment analyzes your symptoms
+                            to guide you toward the right care.
+                        </p>
+                    </div>
+
+                    <div class="features-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-stethoscope"></i></div>
+                            <h3>Analyze Symptoms</h3>
+                            <p>Answer simple questions about how you feel.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
+                            <h3>Get Insights</h3>
+                            <p>Receive instant feedback on potential risks.</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon"><i class="fas fa-user-shield"></i></div>
+                            <h3>Private & Secure</h3>
+                            <p>Your health data is encrypted and safe.</p>
+                        </div>
+                    </div>
+
+                    <div class="action-area">
+                        <button onclick="startAssessment()" class="btn btn-primary btn-lg shine-effect">
+                            Start Assessment <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                        </button>
+                        <p class="privacy-note"><i class="fas fa-lock"></i> HIPAA Compliant & Secure</p>
+                    </div>
+                </div>
+
+                <style>
+                    /* New Premium Styles for Intro */
+                    .intro-card {
+                        background: white;
+                        border-radius: 24px;
+                        padding: 4rem 2rem;
+                        text-align: center;
+                        margin-bottom: 2rem;
+                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+                        /* Soft shadow */
+                        border: 1px solid rgba(0, 0, 0, 0.02);
+                        overflow: hidden;
+                        position: relative;
+                    }
+
+                    /* Background decoration */
+                    .intro-card::before {
+                        content: '';
+                        position: absolute;
+                        top: -50%;
+                        left: -50%;
+                        width: 200%;
+                        height: 200%;
+                        background: radial-gradient(circle at 50% 50%, rgba(37, 99, 235, 0.03) 0%, transparent 50%);
+                        z-index: 0;
+                        animation: rotateBg 20s linear infinite;
+                    }
+
+                    @keyframes rotateBg {
+                        from {
+                            transform: rotate(0deg);
+                        }
+
+                        to {
+                            transform: rotate(360deg);
+                        }
+                    }
+
+                    .hero-content,
+                    .features-grid,
+                    .action-area {
+                        position: relative;
+                        z-index: 1;
+                    }
+
+                    .hero-icon-wrapper {
+                        width: 80px;
+                        height: 80px;
+                        background: linear-gradient(135deg, #eff6ff, #dbeafe);
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        margin: 0 auto 1.5rem;
+                        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.1);
+                    }
+
+                    .hero-icon {
+                        font-size: 2.5rem;
+                        color: var(--primary);
+                        animation: pulse 2s infinite;
+                    }
+
+                    @keyframes pulse {
+                        0% {
+                            transform: scale(1);
+                        }
+
+                        50% {
+                            transform: scale(1.1);
+                        }
+
+                        100% {
+                            transform: scale(1);
+                        }
+                    }
+
+                    .hero-title {
+                        font-size: 2.5rem;
+                        font-weight: 800;
+                        background: linear-gradient(135deg, #1e293b, #334155);
+                        background-clip: text;
+                        -webkit-background-clip: text;
+                        -webkit-text-fill-color: transparent;
+                        margin-bottom: 1rem;
+                        letter-spacing: -0.5px;
+                    }
+
+                    .hero-subtitle {
+                        font-size: 1.1rem;
+                        color: var(--text-muted);
+                        max-width: 600px;
+                        margin: 0 auto 3rem;
+                        line-height: 1.6;
+                    }
+
+                    .features-grid {
+                        display: grid;
+                        grid-template-columns: repeat(3, 1fr);
+                        gap: 1.5rem;
+                        margin-bottom: 3rem;
+                        text-align: left;
+                    }
+
+                    .feature-card {
+                        background: #f8fafc;
+                        padding: 1.5rem;
+                        border-radius: 16px;
+                        transition: all 0.3s;
+                        border: 1px solid transparent;
+                    }
+
+                    .feature-card:hover {
+                        background: white;
+                        transform: translateY(-5px);
+                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+                        border-color: rgba(37, 99, 235, 0.1);
+                    }
+
+                    .feature-icon {
+                        width: 40px;
+                        height: 40px;
+                        background: white;
+                        border-radius: 10px;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        color: var(--primary);
+                        font-size: 1.2rem;
+                        margin-bottom: 1rem;
+                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+                    }
+
+                    .feature-card h3 {
+                        font-size: 1.1rem;
+                        font-weight: 600;
+                        margin-bottom: 0.5rem;
+                        color: var(--text-main);
+                    }
+
+                    .feature-card p {
+                        font-size: 0.9rem;
+                        color: var(--text-muted);
+                        line-height: 1.5;
+                    }
+
+                    .btn-lg {
+                        padding: 1rem 3rem;
+                        font-size: 1.1rem;
+                        border-radius: 50px;
+                        /* Pill shape */
+                        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+                        transition: all 0.3s;
+                    }
+
+                    .btn-lg:hover {
+                        transform: translateY(-2px) scale(1.02);
+                        box-shadow: 0 15px 30px rgba(37, 99, 235, 0.3);
+                    }
+
+                    .shine-effect {
+                        position: relative;
+                        overflow: hidden;
+                    }
+
+                    .shine-effect::after {
+                        content: '';
+                        position: absolute;
+                        top: 0;
+                        left: -100%;
+                        width: 100%;
+                        height: 100%;
+                        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+                        animation: shine 3s infinite;
+                    }
+
+                    @keyframes shine {
+                        0% {
+                            left: -100%;
+                        }
+
+                        20% {
+                            left: 100%;
+                        }
+
+                        100% {
+                            left: 100%;
+                        }
+                    }
+
+                    .privacy-note {
+                        margin-top: 1rem;
+                        font-size: 0.85rem;
+                        color: #64748b;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 0.5rem;
+                    }
+
+                    @media (max-width: 768px) {
+                        .features-grid {
+                            grid-template-columns: 1fr;
+                        }
+
+                        .hero-title {
+                            font-size: 2rem;
+                        }
+                    }
+                </style>
+
+                <!-- Progress Bar -->
+                <div class="progress-container" id="progress-section" style="display: none;">
+                    <div class="progress-header">
+                        <div class="progress-text">
+                            Question <span id="current-question">0</span> of <span id="total-questions">0</span>
+                        </div>
+                        <div class="progress-text">
+                            <span id="progress-percentage">0</span>% Complete
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Questions Form -->
+                <form id="assessment-form">
+                    <div id="questions-container"></div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="navigation-buttons" id="nav-buttons" style="display: none;">
+                        <button type="button" class="btn-nav btn-prev" id="prev-btn" onclick="previousQuestion()">
+                            <i class="fas fa-arrow-left"></i> Previous
+                        </button>
+                        <button type="button" class="btn-nav btn-next" id="next-btn" onclick="nextQuestion()">
+                            Next <i class="fas fa-arrow-right"></i>
+                        </button>
+                        <button type="submit" class="btn-nav btn-next" id="submit-btn" style="display: none;">
+                            <i class="fas fa-check"></i> Submit Assessment
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Result Modal -->
+    <div class="modal-overlay" id="result-modal">
+        <div class="modal-content">
+            <div class="result-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 style="margin-bottom: 0.5rem; font-size: 2rem;">Assessment Complete!</h2>
+            <p class="text-muted" style="margin-bottom: 2rem;">Here are your results</p>
+
+            <div class="score-circle">
+                <div class="score-number" id="score-display">0</div>
+                <div class="score-label">Total Score</div>
+            </div>
+
+            <div class="risk-badge" id="risk-display">
+                Moderate Risk
+            </div>
+
+            <p class="text-muted" style="margin: 1.5rem 0; line-height: 1.6;">
+                Based on your responses, we recommend consulting with a healthcare professional for a more detailed
+                evaluation.
+            </p>
+
+            <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                <button class="btn btn-outline" onclick="closeModal()" style="flex: 1;">
+                    Close
+                </button>
+                <button class="btn btn-primary" onclick="findDoctors()" style="flex: 1;">
+                    <i class="fas fa-user-md"></i> Find Specialists
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/sidebar.js"></script>
+    <script src="js/assessment.js"></script>
+</body>
+
+</html>

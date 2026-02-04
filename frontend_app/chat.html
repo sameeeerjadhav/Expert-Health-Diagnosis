@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages | Expert Health</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="app-sidebar"></aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1 class="page-title">Messages</h1>
+
+            <!-- Chat Layout -->
+            <div class="chat-layout">
+                <!-- Sidebar: Conversation List -->
+                <div class="chat-sidebar">
+                    <div class="chat-sidebar-header">
+                        <h2 class="h5" style="margin: 0; font-size: 1.1rem;">Chats</h2>
+                        <div class="chat-search-container">
+                            <i class="fas fa-search chat-search-icon"></i>
+                            <input type="text" class="chat-search-input" placeholder="Search contacts...">
+                        </div>
+                    </div>
+                    <!-- List -->
+                    <div class="chat-list" id="chat-list">
+                        <!-- Loading -->
+                        <div style="text-align: center; padding: 2rem; color: #94a3b8;">
+                            <i class="fas fa-spinner fa-spin"></i> Loading...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Main Chat Area -->
+                <div class="chat-main" id="chat-main">
+                    <!-- Empty State -->
+                    <div class="chat-empty-state" id="empty-state">
+                        <div class="empty-state-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h2>Select a conversation</h2>
+                        <p>Choose a contact from the left to start messaging.</p>
+                    </div>
+
+                    <!-- Active Chat Wrapper -->
+                    <div class="chat-wrapper" id="chat-wrapper"
+                        style="display: none; height: 100%; flex-direction: column;">
+                        <!-- Header -->
+                        <div class="chat-header">
+                            <div style="display: flex; align-items: center; gap: 1rem;">
+                                <!-- Mobile back button -->
+                                <button class="btn btn-outline" style="padding: 6px 10px; display: none;"
+                                    id="mobile-back">
+                                    <i class="fas fa-arrow-left"></i>
+                                </button>
+
+                                <div class="chat-avatar-container">
+                                    <div class="chat-avatar" id="chat-header-avatar">U</div>
+                                    <div class="chat-status-indicator status-online"></div>
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600;" id="chat-header-name">Dr. Name</div>
+                                    <div style="font-size: 0.75rem; color: var(--success);" id="chat-header-status">
+                                        Online
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn btn-outline" style="padding: 8px 12px;" title="Start Video Call"
+                                    onclick="startVideoCall()">
+                                    <i class="fas fa-video"></i>
+                                </button>
+                                <button class="btn btn-outline" style="padding: 8px 12px;" title="More Options">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Messages -->
+                        <div class="chat-messages" id="messages-area">
+                            <!-- Messages populated by JS -->
+                        </div>
+
+                        <!-- Input -->
+                        <div class="chat-input-area">
+                            <div class="input-container">
+                                <button class="chat-action-btn" title="Add Attachment"
+                                    onclick="document.getElementById('file-upload').click()">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                                <input type="file" id="file-upload" style="display: none;"
+                                    onchange="handleFileSelect(event)">
+
+                                <input type="text" class="chat-input" id="message-input"
+                                    placeholder="Type your message..." autocomplete="off">
+
+                                <button class="send-btn" id="send-btn">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <script src="js/sidebar.js"></script>
+    <script src="js/chat.js"></script>
+</body>
+
+</html>
