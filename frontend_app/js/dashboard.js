@@ -1,4 +1,5 @@
-const API_BASE = 'http://localhost:8080/api';
+const isLocalDev = window.location.hostname === 'localhost' && window.location.port !== '' && window.location.port !== '80';
+const API_BASE = isLocalDev ? 'http://localhost:8080/api' : '/api';
 const token = localStorage.getItem('token');
 const userRole = localStorage.getItem('userRole') || 'PATIENT';
 
@@ -11,7 +12,7 @@ if (userRole === 'PATIENT') {
     document.body.classList.add('theme-admin');
 }
 
-if (!token) window.location.href = 'index.html';
+if (!token) window.location.href = 'auth.html';
 
 // Set greeting based on time
 function setGreeting() {
@@ -30,6 +31,10 @@ async function loadDashboardStats() {
         const response = await fetch(`${API_BASE}/dashboard/stats`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (response.status === 401 || response.status === 403) {
+            logout();
+            return;
+        }
         const stats = await response.json();
 
         // Update stats based on role
@@ -72,6 +77,10 @@ async function loadUserInfo() {
         const response = await fetch(`${API_BASE}/users/me`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (response.status === 401 || response.status === 403) {
+            logout();
+            return;
+        }
         const user = await response.json();
 
         // Update greeting with user name
@@ -160,7 +169,7 @@ function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');
     localStorage.removeItem('user');
-    window.location.href = 'index.html';
+    window.location.href = 'auth.html';
 }
 
 // Initialize

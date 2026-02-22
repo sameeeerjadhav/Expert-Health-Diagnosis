@@ -68,6 +68,11 @@ function initSidebar() {
     // User Mini Profile at bottom
     navHtml += `
         <div class="sidebar-footer">
+            <div class="theme-toggle-container" style="margin-bottom: 15px; padding: 0 10px;">
+                <button id="theme-toggle-btn" onclick="window.toggleTheme()" class="btn btn-outline" style="width: 100%; border-color: rgba(255,255,255,0.2); color: var(--text-sidebar); display: flex; justify-content: center; gap: 8px;">
+                    <i class="fas fa-moon"></i> <span>Dark Mode</span>
+                </button>
+            </div>
             <div class="user-mini-profile">
                 <div class="user-avatar-small">${userRole.charAt(0)}</div>
                 <div class="user-info-mini">
@@ -97,17 +102,57 @@ if (document.readyState === 'loading') {
 function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('userRole');
-    window.location.href = 'index.html';
+    window.location.href = 'auth.html';
 }
+
+// Global Theme Logic
+window.toggleTheme = function () {
+    const isDark = document.body.classList.toggle('theme-oled-dark');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    updateThemeUI(isDark);
+};
+
+function applyThemeOnLoad() {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'dark') {
+        document.body.classList.add('theme-oled-dark');
+    }
+}
+
+function updateThemeUI(isDark) {
+    const btn = document.getElementById('theme-toggle-btn');
+    if (btn) {
+        if (isDark) {
+            btn.innerHTML = '<i class="fas fa-sun"></i> <span>Light Mode</span>';
+        } else {
+            btn.innerHTML = '<i class="fas fa-moon"></i> <span>Dark Mode</span>';
+        }
+    }
+}
+
+// Call immediately to avoid flash
+applyThemeOnLoad();
+
+// Update UI after sidebar renders
+document.addEventListener('DOMContentLoaded', () => {
+    updateThemeUI(document.body.classList.contains('theme-oled-dark'));
+});
+
 
 async function fetchUserName() {
     const token = localStorage.getItem('token');
     if (!token) return;
 
     try {
-        const response = await fetch('http://localhost:8080/api/users/me', {
+        const isLocalDev = window.location.hostname === 'localhost' && window.location.port !== '' && window.location.port !== '80';
+        const API_BASE = isLocalDev ? 'http://localhost:8080/api' : '/api';
+        const response = await fetch(`${API_BASE}/users/me`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (response.status === 401 || response.status === 403) {
+            logout();
+            return;
+        }
         if (response.ok) {
             const user = await response.json();
             const nameDisplay = document.getElementById('sidebar-user-name');

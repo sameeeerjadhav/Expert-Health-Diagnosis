@@ -1,5 +1,6 @@
 // notifications.js - Real-time notification system
-const API_BASE = 'http://localhost:8080/api';
+const isLocalDev = window.location.hostname === 'localhost' && window.location.port !== '' && window.location.port !== '80';
+const API_BASE = isLocalDev ? 'http://localhost:8080/api' : '/api';
 const token = localStorage.getItem('token');
 
 let notificationStompClient = null;
@@ -32,7 +33,8 @@ async function initNotifications() {
 function connectNotificationWebSocket() {
     if (!currentUserId) return;
 
-    const socket = new SockJS('http://localhost:8080/ws-chat');
+    const isLocalDev = window.location.hostname === 'localhost' && window.location.port !== '' && window.location.port !== '80';
+    const socket = new SockJS(isLocalDev ? 'http://localhost:8080/ws-chat' : '/ws-chat');
     notificationStompClient = Stomp.over(socket);
     notificationStompClient.debug = null;
 

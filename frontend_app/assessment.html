@@ -15,11 +15,12 @@
         }
 
         .progress-container {
-            background: white;
+            background: var(--bg-surface);
             border-radius: 16px;
             padding: 2rem;
             margin-bottom: 2rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
         }
 
         .progress-header {
@@ -36,7 +37,8 @@
 
         .progress-bar {
             height: 12px;
-            background: #e0e7ff;
+            background: var(--bg-body);
+            border: 1px solid var(--border-color);
             border-radius: 20px;
             overflow: hidden;
             position: relative;
@@ -50,11 +52,12 @@
         }
 
         .question-card {
-            background: white;
+            background: var(--bg-surface);
             border-radius: 16px;
             padding: 2.5rem;
             margin-bottom: 2rem;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            box-shadow: var(--shadow-sm);
+            border: 1px solid var(--border-color);
             animation: slideIn 0.3s ease-out;
         }
 
@@ -100,8 +103,8 @@
         }
 
         .option-btn {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
+            background: var(--bg-body);
+            border: 2px solid var(--border-color);
             padding: 1.5rem 1rem;
             border-radius: 12px;
             cursor: pointer;
@@ -130,9 +133,9 @@
 
         .option-btn:hover {
             border-color: var(--primary);
-            background: #eff6ff;
+            background: color-mix(in srgb, var(--primary) 10%, var(--bg-body));
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(34, 139, 230, 0.2);
+            box-shadow: var(--shadow-sm);
         }
 
         .option-btn.selected {
@@ -187,13 +190,13 @@
         }
 
         .btn-prev {
-            background: white;
+            background: var(--bg-surface);
             color: var(--text-main);
             border: 2px solid var(--border-color);
         }
 
         .btn-prev:hover {
-            background: #f8fafc;
+            background: var(--bg-body);
         }
 
         .btn-next {
@@ -234,13 +237,14 @@
         }
 
         .modal-content {
-            background: white;
+            background: var(--bg-surface);
             padding: 3rem;
             border-radius: 20px;
             max-width: 500px;
             width: 90%;
             text-align: center;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-color);
             animation: scaleIn 0.3s ease-out;
         }
 
@@ -259,7 +263,7 @@
         .result-icon {
             width: 80px;
             height: 80px;
-            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            background: color-mix(in srgb, var(--primary) 15%, transparent);
             color: var(--primary);
             border-radius: 50%;
             display: flex;
@@ -297,7 +301,7 @@
             width: 120px;
             height: 120px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            background: var(--bg-body);
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -319,7 +323,8 @@
         }
 
         .intro-card {
-            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 3rem;
             text-align: center;
@@ -402,14 +407,13 @@
                 <style>
                     /* New Premium Styles for Intro */
                     .intro-card {
-                        background: white;
+                        background: var(--bg-surface);
                         border-radius: 24px;
                         padding: 4rem 2rem;
                         text-align: center;
                         margin-bottom: 2rem;
-                        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
-                        /* Soft shadow */
-                        border: 1px solid rgba(0, 0, 0, 0.02);
+                        box-shadow: var(--shadow-sm);
+                        border: 1px solid var(--border-color);
                         overflow: hidden;
                         position: relative;
                     }
@@ -447,13 +451,13 @@
                     .hero-icon-wrapper {
                         width: 80px;
                         height: 80px;
-                        background: linear-gradient(135deg, #eff6ff, #dbeafe);
+                        background: color-mix(in srgb, var(--primary) 15%, transparent);
                         border-radius: 50%;
                         display: flex;
                         align-items: center;
                         justify-content: center;
                         margin: 0 auto 1.5rem;
-                        box-shadow: 0 10px 20px rgba(37, 99, 235, 0.1);
+                        box-shadow: var(--shadow-sm);
                     }
 
                     .hero-icon {
@@ -504,24 +508,24 @@
                     }
 
                     .feature-card {
-                        background: #f8fafc;
+                        background: var(--bg-body);
                         padding: 1.5rem;
                         border-radius: 16px;
                         transition: all 0.3s;
-                        border: 1px solid transparent;
+                        border: 1px solid var(--border-color);
                     }
 
                     .feature-card:hover {
-                        background: white;
+                        background: var(--bg-surface);
                         transform: translateY(-5px);
-                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-                        border-color: rgba(37, 99, 235, 0.1);
+                        box-shadow: var(--shadow-sm);
+                        border-color: var(--primary);
                     }
 
                     .feature-icon {
                         width: 40px;
                         height: 40px;
-                        background: white;
+                        background: var(--bg-surface);
                         border-radius: 10px;
                         display: flex;
                         align-items: center;
@@ -529,7 +533,7 @@
                         color: var(--primary);
                         font-size: 1.2rem;
                         margin-bottom: 1rem;
-                        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+                        box-shadow: var(--shadow-sm);
                     }
 
                     .feature-card h3 {

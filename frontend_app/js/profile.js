@@ -1,8 +1,9 @@
-const API_BASE = 'http://localhost:8080/api';
+const isLocalDev = window.location.hostname === 'localhost' && window.location.port !== '' && window.location.port !== '80';
+const API_BASE = isLocalDev ? 'http://localhost:8080/api' : '/api';
 const token = localStorage.getItem('token');
 const userRole = localStorage.getItem('userRole') || 'PATIENT';
 
-if (!token) window.location.href = 'index.html';
+if (!token) window.location.href = 'auth.html';
 
 // Initialize
 document.addEventListener('DOMContentLoaded', () => {
@@ -34,6 +35,10 @@ async function loadProfile() {
 
         if (!response.ok) throw new Error('Failed to load profile');
 
+        if (response.status === 401 || response.status === 403) {
+            window.location.href = 'auth.html';
+            return;
+        }
         const user = await response.json();
 
         // Basic Fields

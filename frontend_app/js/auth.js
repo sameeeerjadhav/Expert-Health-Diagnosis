@@ -1,4 +1,5 @@
-const API_BASE = 'http://localhost:8080/api/auth';
+const isLocalDev = window.location.hostname === 'localhost' && window.location.port !== '' && window.location.port !== '80';
+const API_BASE = isLocalDev ? 'http://localhost:8080/api/auth' : '/api/auth';
 
 const loginForm = document.getElementById('login-form');
 const registerForm = document.getElementById('register-form');

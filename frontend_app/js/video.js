@@ -35,7 +35,8 @@ async function init() {
 
 // 2. Connect to Signaling Server (WebSocket)
 function connectSignaling() {
-    const socket = new SockJS('http://localhost:8080/ws-chat');
+    const isLocalDev = window.location.hostname === 'localhost' && window.location.port !== '' && window.location.port !== '80';
+    const socket = new SockJS(isLocalDev ? 'http://localhost:8080/ws-chat' : '/ws-chat');
     stompClient = Stomp.over(socket);
     stompClient.debug = null;
 

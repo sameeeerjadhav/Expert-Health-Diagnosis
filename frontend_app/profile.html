@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 
-<body style="background: #f1f5f9;">
+<body class="bg-body">
 
     <div class="app-container">
         <!-- Sidebar -->
@@ -77,7 +77,7 @@
                                 <label class="form-label-enhanced">Email Address</label>
                                 <div class="form-field-enhanced">
                                     <input type="email" class="form-control" id="email" disabled
-                                        style="background: #f1f5f9; cursor: not-allowed;">
+                                        style="cursor: not-allowed;">
                                     <i class="fas fa-envelope field-icon"></i>
                                 </div>
                                 <p class="form-hint">Email cannot be changed</p>
@@ -241,7 +241,7 @@
         function logout() {
             localStorage.removeItem('token');
             localStorage.removeItem('userRole');
-            window.location.href = 'index.html';
+            window.location.href = 'auth.html';
         }
     </script>
 </body>

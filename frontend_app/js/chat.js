@@ -1,4 +1,5 @@
-const API_BASE = 'http://localhost:8080/api';
+const isLocalDev = window.location.hostname === 'localhost' && window.location.port !== '' && window.location.port !== '80';
+const API_BASE = isLocalDev ? 'http://localhost:8080/api' : '/api';
 const token = localStorage.getItem('token');
 const userRole = localStorage.getItem('userRole') || 'PATIENT';
 let senderId = null; // Will be fetched
@@ -28,7 +29,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     if (!token) {
         console.error('[CHAT] No token found, redirecting to login');
-        window.location.href = 'index.html';
+        window.location.href = 'auth.html';
         return;
     }
 
@@ -72,6 +73,10 @@ async function fetchCurrentUser() {
         const response = await fetch(`${API_BASE}/users/me`, {
             headers: { 'Authorization': `Bearer ${token}` }
         });
+        if (response.status === 401 || response.status === 403) {
+            window.location.href = 'auth.html';
+            return;
+        }
         const user = await response.json();
         senderId = user.id;
         console.log('Current user ID:', senderId);
@@ -230,7 +235,7 @@ function connectWebSocket() {
         return;
     }
 
-    const socket = new SockJS('http://localhost:8080/ws-chat');
+    const socket = new SockJS('/ws-chat');
     stompClient = Stomp.over(socket);
     stompClient.debug = null; // Quiet mode
 

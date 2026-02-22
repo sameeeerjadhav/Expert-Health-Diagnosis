@@ -1,7 +1,8 @@
-const API_BASE = 'http://localhost:8080/api';
+const isLocalDev = window.location.hostname === 'localhost' && window.location.port !== '' && window.location.port !== '80';
+const API_BASE = isLocalDev ? 'http://localhost:8080/api' : '/api';
 const token = localStorage.getItem('token');
 
-if (!token) window.location.href = 'index.html';
+if (!token) window.location.href = 'auth.html';
 
 // DOM Elements
 const introSection = document.getElementById('intro-section');
@@ -238,12 +239,13 @@ window.closeModal = function () {
 
 // Find doctors
 window.findDoctors = function () {
+    localStorage.setItem('lastRiskLevel', currentRisk);
     resultModal.style.display = 'none';
-    window.location.href = 'find-doctor.html';
+    window.location.href = 'doctors.html';
 }
 
 // Logout
 function logout() {
     localStorage.clear();
-    window.location.href = 'index.html';
+    window.location.href = 'auth.html';
 }

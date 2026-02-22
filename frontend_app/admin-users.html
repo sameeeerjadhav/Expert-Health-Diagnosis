@@ -36,9 +36,9 @@
             <!-- Users Table -->
             <div class="card">
                 <div class="table-container" style="overflow-x: auto;">
-                    <table style="width: 100%; border-collapse: collapse;">
+                    <table class="data-table" style="width: 100%; border-collapse: collapse;">
                         <thead>
-                            <tr style="background: #f1f5f9; border-bottom: 2px solid #e2e8f0;">
+                            <tr>
                                 <th style="padding: 12px; text-align: left;">ID</th>
                                 <th style="padding: 12px; text-align: left;">Name</th>
                                 <th style="padding: 12px; text-align: left;">Email</th>
@@ -110,10 +110,11 @@
 
     <script src="js/sidebar.js"></script>
     <script>
-        const API_BASE = 'http://localhost:8080/api';
+        const isLocalDev = window.location.hostname === 'localhost' && window.location.port !== '' && window.location.port !== '80';
+        const API_BASE = isLocalDev ? 'http://localhost:8080/api' : '/api';
         const token = localStorage.getItem('token');
 
-        if (!token) window.location.href = 'index.html';
+        if (!token) window.location.href = 'auth.html';
 
         async function loadUsers(role = '') {
             try {
@@ -134,7 +135,7 @@
                 }
 
                 tbody.innerHTML = users.map(user => `
-                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                    <tr>
                         <td style="padding: 12px;">${user.id}</td>
                         <td style="padding: 12px; font-weight: 600;">${user.fullName}</td>
                         <td style="padding: 12px;">${user.email}</td>
@@ -258,7 +259,7 @@
 
         function logout() {
             localStorage.clear();
-            window.location.href = 'index.html';
+            window.location.href = 'auth.html';
         }
 
         // Event listeners
